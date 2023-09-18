@@ -3309,7 +3309,13 @@ static void vim_mktempdir(void)
     // "/tmp/" exists, now try to create "/tmp/nvim.<user>/".
     add_pathsep(tmp);
 
-    const char *appname = get_appname();
+    // Make a copy of the appname to avoid modifying it
+    char appname[40] = { 0 };
+    xstrlcpy(appname, get_appname(), sizeof(appname));
+    // Substitute slashes in appname with underscores
+    memchrsub(appname, '/', '_', sizeof(appname));
+    memchrsub(appname, '\\', '_', sizeof(appname));
+
     xstrlcat(tmp, appname, sizeof(tmp));
     xstrlcat(tmp, ".", sizeof(tmp));
     xstrlcat(tmp, user, sizeof(tmp));
