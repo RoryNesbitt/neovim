@@ -75,6 +75,9 @@ bool appname_is_valid(void)
 {
   const char *appname = get_appname();
   const size_t appname_len = strlen(appname);
+  if (appname[0] == PATHSEP) {
+    return false;
+  }
   for (size_t i = 0; i < appname_len; i++) {
     if (appname[i] == '.' && appname[i + 1] == '.'
         && (i == 0 || appname[i - 1] == PATHSEP)
