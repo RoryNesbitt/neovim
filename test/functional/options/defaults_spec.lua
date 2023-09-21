@@ -631,6 +631,7 @@ describe('stdpath()', function()
     runAppnameTest('../a', 1)
     runAppnameTest('a/..', 1)
     runAppnameTest('/a/b', 1)
+    runAppnameTest('..', 1)
     -- APPNAMEs that should be accepted
     runAppnameTest('a/b', -1)
     runAppnameTest('a/b/c', -1)
