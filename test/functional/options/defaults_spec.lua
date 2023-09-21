@@ -627,11 +627,13 @@ describe('stdpath()', function()
       eq(expectedExitCode, exec_lua(lua_code))
     end
     -- APPNAMEs that should be rejected
-    test_appname('a/../b', 1)
-    test_appname('../a', 1)
-    test_appname('a/..', 1)
+    if not is_os('win') then
+      test_appname('a/../b', 1)
+      test_appname('../a', 1)
+      test_appname('a/..', 1)
+      test_appname('..', 1)
+    end
     test_appname('/a/b', 1)
-    test_appname('..', 1)
     -- APPNAMEs that should be accepted
     test_appname('a/b', -1)
     test_appname('a/b/c', -1)
