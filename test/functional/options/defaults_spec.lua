@@ -617,8 +617,30 @@ describe('stdpath()', function()
     -- Check that Nvim rejects invalid APPNAMEs
     -- Call jobstart() and jobwait() in the same RPC request to reduce flakiness.
     eq(1, exec_lua([[
-      local child = vim.fn.jobstart({ vim.v.progpath }, { env = { NVIM_APPNAME = 'a/b\\c' } })
+      local child = vim.fn.jobstart({ vim.v.progpath }, { env = { NVIM_APPNAME = 'a/../b' } })
       return vim.fn.jobwait({ child }, 3000)[1]
+    ]]))
+    eq(1, exec_lua([[
+      local child = vim.fn.jobstart({ vim.v.progpath }, { env = { NVIM_APPNAME = '../a' } })
+      return vim.fn.jobwait({ child }, 3000)[1]
+    ]]))
+    eq(1, exec_lua([[
+      local child = vim.fn.jobstart({ vim.v.progpath }, { env = { NVIM_APPNAME = 'a/..' } })
+      return vim.fn.jobwait({ child }, 3000)[1]
+    ]]))
+    eq(1, exec_lua([[
+      local child = vim.fn.jobstart({ vim.v.progpath }, { env = { NVIM_APPNAME = '/a/b' } })
+      return vim.fn.jobwait({ child }, 3000)[1]
+    ]]))
+    -- Check that Nvim accepts valid APPNAMEs
+    -- use a short wait because this should run fine
+    eq(-1, exec_lua([[
+      local child = vim.fn.jobstart({ vim.v.progpath }, { env = { NVIM_APPNAME = 'a/b' } })
+      return vim.fn.jobwait({ child }, 100)[1]
+    ]]))
+    eq(-1, exec_lua([[
+      local child = vim.fn.jobstart({ vim.v.progpath }, { env = { NVIM_APPNAME = 'a/b/c' } })
+      return vim.fn.jobwait({ child }, 100)[1]
     ]]))
   end)
 
