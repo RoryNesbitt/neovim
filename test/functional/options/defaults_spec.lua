@@ -627,14 +627,14 @@ describe('stdpath()', function()
       eq(expectedExitCode, exec_lua(lua_code))
     end
     -- APPNAMEs that should be rejected
-    runAppnameTest('a/../b', 1)
-    runAppnameTest('../a', 1)
-    runAppnameTest('a/..', 1)
-    runAppnameTest('/a/b', 1)
-    runAppnameTest('..', 1)
+    test_appname('a/../b', 1)
+    test_appname('../a', 1)
+    test_appname('a/..', 1)
+    test_appname('/a/b', 1)
+    test_appname('..', 1)
     -- APPNAMEs that should be accepted
-    runAppnameTest('a/b', -1)
-    runAppnameTest('a/b/c', -1)
+    test_appname('a/b', -1)
+    test_appname('a/b/c', -1)
   end)
 
   describe('returns a String', function()
