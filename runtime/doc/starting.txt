@@ -1395,7 +1395,8 @@ environment variable. This variable controls the sub-directory that Nvim will
 read from (and auto-create) in each of the base directories. For example,
 setting `$NVIM_APPNAME` to "foo" before starting will cause Nvim to look for
 configuration files in `$XDG_CONFIG_HOME/foo` instead of
-`$XDG_CONFIG_HOME/nvim`.
+`$XDG_CONFIG_HOME/nvim`. `$NVIM_APPNAME` must be a name, such as "foo", or a
+relative path, such as "foo/bar".
 
 One use-case for $NVIM_APPNAME is to "isolate" Nvim applications.
 Alternatively, for true isolation, on Linux you can use cgroups namespaces: >
