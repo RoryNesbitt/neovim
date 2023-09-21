@@ -616,32 +616,26 @@ describe('stdpath()', function()
 
     -- Check that Nvim rejects invalid APPNAMEs
     -- Call jobstart() and jobwait() in the same RPC request to reduce flakiness.
-    eq(1, exec_lua([[
-      local child = vim.fn.jobstart({ vim.v.progpath }, { env = { NVIM_APPNAME = 'a/../b' } })
-      return vim.fn.jobwait({ child }, 3000)[1]
-    ]]))
-    eq(1, exec_lua([[
-      local child = vim.fn.jobstart({ vim.v.progpath }, { env = { NVIM_APPNAME = '../a' } })
-      return vim.fn.jobwait({ child }, 3000)[1]
-    ]]))
-    eq(1, exec_lua([[
-      local child = vim.fn.jobstart({ vim.v.progpath }, { env = { NVIM_APPNAME = 'a/..' } })
-      return vim.fn.jobwait({ child }, 3000)[1]
-    ]]))
-    eq(1, exec_lua([[
-      local child = vim.fn.jobstart({ vim.v.progpath }, { env = { NVIM_APPNAME = '/a/b' } })
-      return vim.fn.jobwait({ child }, 3000)[1]
-    ]]))
-    -- Check that Nvim accepts valid APPNAMEs
-    -- use a short wait because this should run fine
-    eq(-1, exec_lua([[
-      local child = vim.fn.jobstart({ vim.v.progpath }, { env = { NVIM_APPNAME = 'a/b' } })
-      return vim.fn.jobwait({ child }, 100)[1]
-    ]]))
-    eq(-1, exec_lua([[
-      local child = vim.fn.jobstart({ vim.v.progpath }, { env = { NVIM_APPNAME = 'a/b/c' } })
-      return vim.fn.jobwait({ child }, 100)[1]
-    ]]))
+    local function runAppnameTest(appname, expectedExitCode)
+      --substitute '/' with '\\' on Windows
+      appname = is_os('win') and appname:gsub('/', '\\') or appname
+      -- wait for less time if the expectation is success
+      local waitTime = (expectedExitCode == -1) and 100 or 3000
+      local lua_code = string.format([[
+        local child = vim.fn.jobstart({ vim.v.progpath }, { env = { NVIM_APPNAME = '%s' } })
+        return vim.fn.jobwait({ child }, %d)[1]
+      ]], appname, waitTime)
+
+      eq(expectedExitCode, exec_lua(lua_code))
+    end
+    -- APPNAMEs that should be rejected
+    runAppnameTest('a/../b', 1)
+    runAppnameTest('../a', 1)
+    runAppnameTest('a/..', 1)
+    runAppnameTest('/a/b', 1)
+    -- APPNAMEs that should be accepted
+    runAppnameTest('a/b', -1)
+    runAppnameTest('a/b/c', -1)
   end)
 
   describe('returns a String', function()
