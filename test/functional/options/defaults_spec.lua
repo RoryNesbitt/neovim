@@ -616,13 +616,13 @@ describe('stdpath()', function()
 
     -- Check that Nvim rejects invalid APPNAMEs
     -- Call jobstart() and jobwait() in the same RPC request to reduce flakiness.
-    local function runAppnameTest(appname, expectedExitCode)
+    local function runAppnameTest(testAppname, expectedExitCode)
       -- wait for less time if the expectation is success
       local waitTime = (expectedExitCode == -1) and 100 or 3000
       local lua_code = string.format([[
         local child = vim.fn.jobstart({ vim.v.progpath }, { env = { NVIM_APPNAME = '%s' } })
         return vim.fn.jobwait({ child }, %d)[1]
-      ]], alter_slashes(appname), waitTime)
+      ]], alter_slashes(testAppname), waitTime)
 
       eq(expectedExitCode, exec_lua(lua_code))
     end
