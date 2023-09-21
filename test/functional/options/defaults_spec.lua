@@ -928,3 +928,14 @@ describe('stdpath()', function()
     end)
   end)
 end)
+
+describe('tempname()', function()
+  describe('returns a string', function()
+    it('when $NVIM_APPNAME is a path', function()
+        clear({env={
+          NVIM_APPNAME=alter_slashes('a/b'),
+        }})
+        funcs.tempname() -- should not crash
+    end)
+  end)
+end)
