@@ -3293,8 +3293,8 @@ static void vim_mktempdir(void)
 
   (void)os_get_username(user, sizeof(user));
   // Usernames may contain slashes! #19240
-  memchrsub(user, '/', '_', sizeof(user));
-  memchrsub(user, '\\', '_', sizeof(user));
+  memchrsub(user, '/', '%', sizeof(user));
+  memchrsub(user, '\\', '%', sizeof(user));
 
   // Make sure the umask doesn't remove the executable bit.
   // "repl" has been reported to use "0177".
